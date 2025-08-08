@@ -3,12 +3,12 @@ const path = require('path');
  
 const filePath = path.join(__dirname, '../data/produtos.json');
  
-const lerProdutos = () => {
+const ler = () => {
   const data = fs.readFileSync(filePath, 'utf-8');
   return JSON.parse(data);
 };
  
-exports.listarProdutos = (req, res) => {
+exports.lista = (req, res) => {
   try {
     const produtos = lerProdutos();
     res.json(produtos);
@@ -17,7 +17,7 @@ exports.listarProdutos = (req, res) => {
   }
 };
  
-exports.obterProduto = (req, res) => {
+exports.obter = (req, res) => {
   try {
     const produtos = lerProdutos();
     const id = parseInt(req.params.id);
