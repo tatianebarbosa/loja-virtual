@@ -2,18 +2,18 @@
   {
     "id": 1,
     "nome": "Notebook Gamer",
-    "preco": 5999.90,
+    "preco": 5999.65,
     "descricao": "Notebook potente para jogos e edição"
   },
   {
     "id": 2,
     "nome": "Smartphone X",
-    "preco": 2499.00,
+    "preco": 2499.07,
     "descricao": "Tela AMOLED, câmera de 108MP"
   },
   {
     "id": 3,
-    "nome": "Fone Bluetooth",
+    "nome": "Fone Bluetooth JBL",
     "preco": 199.90,
     "descricao": "Som surround e cancelamento de ruído"
   }
