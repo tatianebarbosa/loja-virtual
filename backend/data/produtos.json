@@ -1,0 +1,21 @@
+[
+  {
+    "id": 1,
+    "nome": "Notebook Gamer",
+    "preco": 5999.90,
+    "descricao": "Notebook potente para jogos e edição"
+  },
+  {
+    "id": 2,
+    "nome": "Smartphone X",
+    "preco": 2499.00,
+    "descricao": "Tela AMOLED, câmera de 108MP"
+  },
+  {
+    "id": 3,
+    "nome": "Fone Bluetooth",
+    "preco": 199.90,
+    "descricao": "Som surround e cancelamento de ruído"
+  }
+]
+ 
