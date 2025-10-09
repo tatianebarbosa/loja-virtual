@@ -8,18 +8,18 @@ const ler = () => {
   return JSON.parse(data);
 };
  
-exports.lista = (req, res) => {
+exports.listarProdutos = (req, res) => {
   try {
-    const produtos = lerProdutos();
+    const produtos = ler();
     res.json(produtos);
   } catch (error) {
     res.status(500).json({ error: 'Erro ao ler produtos' });
   }
 };
  
-exports.obter = (req, res) => {
+exports.obterProduto = (req, res) => {
   try {
-    const produtos = lerProdutos();
+    const produtos = ler();
     const id = parseInt(req.params.id);
     const produto = produtos.find(p => p.id === id);
  
