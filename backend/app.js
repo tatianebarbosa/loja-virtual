@@ -1,20 +1,19 @@
-// backend/app.js
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 const produtoRoutes = require('./routes/produtoRoutes');
- 
+
 const app = express();
- 
-// Middlewares
-app.use(cors()); // ✅ Importante para o React acessar a API
+const frontendPath = path.join(__dirname, '../frontend');
+
+app.use(cors());
 app.use(express.json());
- 
-// Rotas
+
 app.use('/api/produtos', produtoRoutes);
- 
-// Rota raiz
+app.use(express.static(frontendPath));
+
 app.get('/', (req, res) => {
-  res.json({ message: 'API está funcionando!' });
+  res.sendFile(path.join(frontendPath, 'index.html'));
 });
- 
+
 module.exports = app;

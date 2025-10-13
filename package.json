@@ -1,0 +1,10 @@
+{
+  "name": "loja-virtual",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "npm --prefix backend run dev",
+    "start": "npm --prefix backend start",
+    "install:backend": "npm --prefix backend install"
+  }
+}

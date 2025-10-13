@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Loja Virtual</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="Loja Virtual">
+        <span class="brand-mark">LV</span>
+        <span>Loja Virtual</span>
+      </a>
+
+      <div class="cart-summary" aria-live="polite">
+        <span id="cart-count">0 itens</span>
+        <strong id="cart-total">R$ 0,00</strong>
+      </div>
+    </header>
+
+    <main>
+      <section class="intro">
+        <div>
+          <p class="eyebrow">Ofertas selecionadas</p>
+          <h1>Produtos para montar seu setup do jeito certo.</h1>
+        </div>
+        <div class="search-wrap">
+          <label for="search">Buscar produto</label>
+          <input id="search" type="search" placeholder="Notebook, smartphone, fone..." />
+        </div>
+      </section>
+
+      <section class="shop-layout" aria-label="Produtos e carrinho">
+        <div>
+          <div class="section-heading">
+            <h2>Produtos</h2>
+            <span id="product-count">Carregando...</span>
+          </div>
+          <div id="products" class="products-grid"></div>
+        </div>
+
+        <aside class="cart-panel" aria-label="Carrinho">
+          <div class="section-heading">
+            <h2>Carrinho</h2>
+            <button id="clear-cart" type="button">Limpar</button>
+          </div>
+          <div id="cart-items" class="cart-items">
+            <p class="empty-state">Seu carrinho está vazio.</p>
+          </div>
+          <div class="checkout-row">
+            <span>Total</span>
+            <strong id="checkout-total">R$ 0,00</strong>
+          </div>
+          <button class="checkout-button" type="button">Finalizar compra</button>
+        </aside>
+      </section>
+    </main>
+
+    <script src="/script.js"></script>
+  </body>
+</html>
