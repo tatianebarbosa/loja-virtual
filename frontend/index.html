@@ -24,6 +24,11 @@
         <div>
           <p class="eyebrow">Ofertas selecionadas</p>
           <h1>Produtos para montar seu setup do jeito certo.</h1>
+          <div class="benefits" aria-label="Benefícios da loja">
+            <span>Frete grátis acima de R$ 500</span>
+            <span>Compra segura</span>
+            <span>Retirada em até 2 horas</span>
+          </div>
         </div>
         <div class="search-wrap">
           <label for="search">Buscar produto</label>
@@ -34,9 +39,21 @@
       <section class="shop-layout" aria-label="Produtos e carrinho">
         <div>
           <div class="section-heading">
-            <h2>Produtos</h2>
-            <span id="product-count">Carregando...</span>
+            <div>
+              <h2>Produtos</h2>
+              <span id="product-count">Carregando...</span>
+            </div>
+            <label class="sort-control" for="sort">
+              <span>Ordenar</span>
+              <select id="sort">
+                <option value="featured">Destaques</option>
+                <option value="price-asc">Menor preço</option>
+                <option value="price-desc">Maior preço</option>
+                <option value="rating">Melhor avaliação</option>
+              </select>
+            </label>
           </div>
+          <div id="category-filters" class="category-filters" aria-label="Categorias"></div>
           <div id="products" class="products-grid"></div>
         </div>
 

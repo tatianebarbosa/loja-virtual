@@ -1,12 +1,8 @@
-const productImages = {
-  1: 'https://images.unsplash.com/photo-1593642702821-c8da6771f0c6?auto=format&fit=crop&w=900&q=80',
-  2: 'https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=900&q=80',
-  3: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=900&q=80',
-};
-
 const productsEl = document.querySelector('#products');
 const productCountEl = document.querySelector('#product-count');
+const categoryFiltersEl = document.querySelector('#category-filters');
 const searchEl = document.querySelector('#search');
+const sortEl = document.querySelector('#sort');
 const cartItemsEl = document.querySelector('#cart-items');
 const cartCountEl = document.querySelector('#cart-count');
 const cartTotalEl = document.querySelector('#cart-total');
@@ -14,6 +10,7 @@ const checkoutTotalEl = document.querySelector('#checkout-total');
 const clearCartEl = document.querySelector('#clear-cart');
 
 let products = [];
+let selectedCategory = 'Todos';
 const cart = new Map();
 
 const money = new Intl.NumberFormat('pt-BR', {
@@ -37,12 +34,23 @@ function renderProducts(items) {
     .map(
       (product) => `
         <article class="product-card">
-          <img src="${productImages[product.id] || productImages[1]}" alt="${product.nome}" />
+          <div class="product-media">
+            <img src="${product.imagem}" alt="${product.nome}" />
+            <span class="product-tag">${product.tag}</span>
+          </div>
           <div class="product-body">
+            <div class="product-meta">
+              <span>${product.categoria}</span>
+              <span>Nota ${String(product.avaliacao).replace('.', ',')}</span>
+            </div>
             <h3>${product.nome}</h3>
             <p>${product.descricao}</p>
             <div class="price-row">
-              <span class="price">${formatPrice(product.preco)}</span>
+              <span>
+                <span class="old-price">${formatPrice(product.precoAntigo)}</span>
+                <span class="price">${formatPrice(product.preco)}</span>
+                <span class="installment">${product.parcelamento}</span>
+              </span>
               <button class="add-button" type="button" data-id="${product.id}">Adicionar</button>
             </div>
           </div>
@@ -50,6 +58,43 @@ function renderProducts(items) {
       `
     )
     .join('');
+}
+
+function renderCategories() {
+  const categories = ['Todos', ...new Set(products.map((product) => product.categoria))];
+
+  categoryFiltersEl.innerHTML = categories
+    .map(
+      (category) => `
+        <button class="category-filter ${category === selectedCategory ? 'is-active' : ''}" type="button" data-category="${category}">
+          ${category}
+        </button>
+      `
+    )
+    .join('');
+}
+
+function getVisibleProducts() {
+  const term = searchEl.value.trim().toLowerCase();
+  const sort = sortEl.value;
+
+  const filtered = products.filter((product) => {
+    const matchesCategory = selectedCategory === 'Todos' || product.categoria === selectedCategory;
+    const matchesSearch = `${product.nome} ${product.descricao} ${product.categoria}`.toLowerCase().includes(term);
+    return matchesCategory && matchesSearch;
+  });
+
+  return filtered.sort((a, b) => {
+    if (sort === 'price-asc') return a.preco - b.preco;
+    if (sort === 'price-desc') return b.preco - a.preco;
+    if (sort === 'rating') return b.avaliacao - a.avaliacao;
+    return a.id - b.id;
+  });
+}
+
+function updateCatalog() {
+  renderProducts(getVisibleProducts());
+  renderCategories();
 }
 
 function renderCart() {
@@ -108,19 +153,14 @@ function removeFromCart(id) {
 }
 
 function filterProducts() {
-  const term = searchEl.value.trim().toLowerCase();
-  const filtered = products.filter((product) => {
-    return `${product.nome} ${product.descricao}`.toLowerCase().includes(term);
-  });
-
-  renderProducts(filtered);
+  updateCatalog();
 }
 
 async function loadProducts() {
   try {
     const response = await fetch('/api/produtos');
     products = await response.json();
-    renderProducts(products);
+    updateCatalog();
   } catch (error) {
     productsEl.innerHTML = '<p class="empty-state">Nao foi possivel carregar os produtos.</p>';
     productCountEl.textContent = 'Erro ao carregar';
@@ -145,6 +185,14 @@ clearCartEl.addEventListener('click', () => {
 });
 
 searchEl.addEventListener('input', filterProducts);
+sortEl.addEventListener('change', updateCatalog);
+
+categoryFiltersEl.addEventListener('click', (event) => {
+  const button = event.target.closest('.category-filter');
+  if (!button) return;
+  selectedCategory = button.dataset.category;
+  updateCatalog();
+});
 
 renderCart();
 loadProducts();
