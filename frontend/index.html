@@ -65,11 +65,18 @@
           <div id="cart-items" class="cart-items">
             <p class="empty-state">Seu carrinho está vazio.</p>
           </div>
+          <div class="shipping-progress">
+            <span id="shipping-message">Adicione produtos para calcular o frete grátis.</span>
+            <div class="progress-track" aria-hidden="true">
+              <span id="shipping-bar"></span>
+            </div>
+          </div>
           <div class="checkout-row">
             <span>Total</span>
             <strong id="checkout-total">R$ 0,00</strong>
           </div>
-          <button class="checkout-button" type="button">Finalizar compra</button>
+          <button id="checkout-button" class="checkout-button" type="button">Finalizar compra</button>
+          <p id="checkout-note" class="checkout-note" role="status"></p>
         </aside>
       </section>
     </main>

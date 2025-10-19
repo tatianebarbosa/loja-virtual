@@ -8,10 +8,16 @@ const cartCountEl = document.querySelector('#cart-count');
 const cartTotalEl = document.querySelector('#cart-total');
 const checkoutTotalEl = document.querySelector('#checkout-total');
 const clearCartEl = document.querySelector('#clear-cart');
+const shippingMessageEl = document.querySelector('#shipping-message');
+const shippingBarEl = document.querySelector('#shipping-bar');
+const checkoutButtonEl = document.querySelector('#checkout-button');
+const checkoutNoteEl = document.querySelector('#checkout-note');
 
 let products = [];
 let selectedCategory = 'Todos';
 const cart = new Map();
+const freeShippingGoal = 500;
+const cartStorageKey = 'loja-virtual-cart';
 
 const money = new Intl.NumberFormat('pt-BR', {
   style: 'currency',
@@ -20,6 +26,19 @@ const money = new Intl.NumberFormat('pt-BR', {
 
 function formatPrice(value) {
   return money.format(Number(value) || 0);
+}
+
+function saveCart() {
+  localStorage.setItem(cartStorageKey, JSON.stringify([...cart.values()]));
+}
+
+function loadSavedCart() {
+  try {
+    const savedItems = JSON.parse(localStorage.getItem(cartStorageKey) || '[]');
+    savedItems.forEach((item) => cart.set(item.id, item));
+  } catch (error) {
+    localStorage.removeItem(cartStorageKey);
+  }
 }
 
 function renderProducts(items) {
@@ -101,13 +120,23 @@ function renderCart() {
   const items = [...cart.values()];
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
   const total = items.reduce((sum, item) => sum + item.quantity * item.preco, 0);
+  const remaining = Math.max(freeShippingGoal - total, 0);
+  const progress = Math.min((total / freeShippingGoal) * 100, 100);
 
   cartCountEl.textContent = `${totalItems} ite${totalItems === 1 ? 'm' : 'ns'}`;
   cartTotalEl.textContent = formatPrice(total);
   checkoutTotalEl.textContent = formatPrice(total);
+  shippingBarEl.style.width = `${progress}%`;
+  shippingMessageEl.textContent =
+    total >= freeShippingGoal
+      ? 'Frete grátis liberado para este pedido.'
+      : `Faltam ${formatPrice(remaining)} para frete grátis.`;
+  checkoutButtonEl.disabled = items.length === 0;
+  saveCart();
 
   if (items.length === 0) {
     cartItemsEl.innerHTML = '<p class="empty-state">Seu carrinho está vazio.</p>';
+    checkoutNoteEl.textContent = '';
     return;
   }
 
@@ -117,9 +146,16 @@ function renderCart() {
         <div class="cart-item">
           <div>
             <strong>${item.nome}</strong>
-            <span>${item.quantity} x ${formatPrice(item.preco)}</span>
+            <span>${formatPrice(item.preco)} cada</span>
           </div>
-          <button class="remove-button" type="button" data-id="${item.id}" aria-label="Remover ${item.nome}">x</button>
+          <div class="cart-actions">
+            <div class="quantity-control" aria-label="Quantidade de ${item.nome}">
+              <button type="button" data-action="decrease" data-id="${item.id}" aria-label="Diminuir ${item.nome}">-</button>
+              <span>${item.quantity}</span>
+              <button type="button" data-action="increase" data-id="${item.id}" aria-label="Aumentar ${item.nome}">+</button>
+            </div>
+            <button class="remove-button" type="button" data-action="remove" data-id="${item.id}" aria-label="Remover ${item.nome}">x</button>
+          </div>
         </div>
       `
     )
@@ -139,16 +175,27 @@ function addToCart(id) {
   renderCart();
 }
 
-function removeFromCart(id) {
+function updateCartItem(id, action) {
   const current = cart.get(id);
   if (!current) return;
 
-  if (current.quantity === 1) {
-    cart.delete(id);
-  } else {
+  if (action === 'increase') {
+    cart.set(id, { ...current, quantity: current.quantity + 1 });
+  }
+
+  if (action === 'decrease' && current.quantity > 1) {
     cart.set(id, { ...current, quantity: current.quantity - 1 });
   }
 
+  if (action === 'decrease' && current.quantity === 1) {
+    cart.delete(id);
+  }
+
+  if (action === 'remove') {
+    cart.delete(id);
+  }
+
+  checkoutNoteEl.textContent = '';
   renderCart();
 }
 
@@ -160,7 +207,14 @@ async function loadProducts() {
   try {
     const response = await fetch('/api/produtos');
     products = await response.json();
+    cart.forEach((item) => {
+      const product = products.find((productItem) => productItem.id === item.id);
+      if (product) {
+        cart.set(item.id, { ...product, quantity: item.quantity });
+      }
+    });
     updateCatalog();
+    renderCart();
   } catch (error) {
     productsEl.innerHTML = '<p class="empty-state">Nao foi possivel carregar os produtos.</p>';
     productCountEl.textContent = 'Erro ao carregar';
@@ -174,13 +228,14 @@ productsEl.addEventListener('click', (event) => {
 });
 
 cartItemsEl.addEventListener('click', (event) => {
-  const button = event.target.closest('.remove-button');
+  const button = event.target.closest('button[data-action]');
   if (!button) return;
-  removeFromCart(Number(button.dataset.id));
+  updateCartItem(Number(button.dataset.id), button.dataset.action);
 });
 
 clearCartEl.addEventListener('click', () => {
   cart.clear();
+  checkoutNoteEl.textContent = '';
   renderCart();
 });
 
@@ -194,5 +249,10 @@ categoryFiltersEl.addEventListener('click', (event) => {
   updateCatalog();
 });
 
+checkoutButtonEl.addEventListener('click', () => {
+  checkoutNoteEl.textContent = 'Pedido pronto para finalizar.';
+});
+
+loadSavedCart();
 renderCart();
 loadProducts();
