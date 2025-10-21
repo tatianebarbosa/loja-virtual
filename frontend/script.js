@@ -60,7 +60,11 @@ function renderProducts(items) {
           <div class="product-body">
             <div class="product-meta">
               <span>${product.categoria}</span>
+              <span>${product.estoque} em estoque</span>
+            </div>
+            <div class="product-meta">
               <span>Nota ${String(product.avaliacao).replace('.', ',')}</span>
+              <span>${Math.round(((product.precoAntigo - product.preco) / product.precoAntigo) * 100)}% off</span>
             </div>
             <h3>${product.nome}</h3>
             <p>${product.descricao}</p>
@@ -167,11 +171,19 @@ function addToCart(id) {
   if (!product) return;
 
   const current = cart.get(id);
+  const quantity = current ? current.quantity : 0;
+
+  if (quantity >= product.estoque) {
+    checkoutNoteEl.textContent = 'Estoque máximo desse produto já está no carrinho.';
+    return;
+  }
+
   cart.set(id, {
     ...product,
-    quantity: current ? current.quantity + 1 : 1,
+    quantity: quantity + 1,
   });
 
+  checkoutNoteEl.textContent = '';
   renderCart();
 }
 
@@ -180,6 +192,11 @@ function updateCartItem(id, action) {
   if (!current) return;
 
   if (action === 'increase') {
+    if (current.quantity >= current.estoque) {
+      checkoutNoteEl.textContent = 'Estoque máximo desse produto já está no carrinho.';
+      return;
+    }
+
     cart.set(id, { ...current, quantity: current.quantity + 1 });
   }
 
