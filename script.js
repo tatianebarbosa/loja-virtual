@@ -55,25 +55,14 @@ function renderProducts(items) {
         <article class="product-card">
           <div class="product-media">
             <img src="${product.imagem}" alt="${product.nome}" />
-            <span class="product-tag">${product.tag}</span>
           </div>
           <div class="product-body">
-            <div class="product-meta">
-              <span>${product.categoria}</span>
-              <span>${product.estoque} em estoque</span>
-            </div>
-            <div class="product-meta">
-              <span>Nota ${String(product.avaliacao).replace('.', ',')}</span>
-              <span>${Math.round(((product.precoAntigo - product.preco) / product.precoAntigo) * 100)}% off</span>
-            </div>
             <h3>${product.nome}</h3>
             <p>${product.descricao}</p>
             <div class="price-row">
-              <span>
-                <span class="old-price">${formatPrice(product.precoAntigo)}</span>
+              <div>
                 <span class="price">${formatPrice(product.preco)}</span>
-                <span class="installment">${product.parcelamento}</span>
-              </span>
+              </div>
               <button class="add-button" type="button" data-id="${product.id}">Adicionar</button>
             </div>
           </div>
