@@ -81,6 +81,30 @@
       </section>
     </main>
 
+    <div id="product-modal" class="modal-overlay" aria-hidden="true">
+      <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <button id="modal-close" class="modal-close" type="button" aria-label="Fechar">x</button>
+        <div class="modal-grid">
+          <img id="modal-image" class="modal-image" src="" alt="" />
+          <div class="modal-content">
+            <span id="modal-category" class="modal-category"></span>
+            <h2 id="modal-title"></h2>
+            <p id="modal-description"></p>
+            <div class="modal-facts">
+              <span id="modal-rating"></span>
+              <span id="modal-stock"></span>
+            </div>
+            <div>
+              <span id="modal-old-price" class="modal-old-price"></span>
+              <strong id="modal-price" class="modal-price"></strong>
+              <span id="modal-installment" class="modal-installment"></span>
+            </div>
+            <button id="modal-add" class="modal-add-button" type="button">Adicionar ao carrinho</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <script src="/script.js"></script>
   </body>
 </html>
