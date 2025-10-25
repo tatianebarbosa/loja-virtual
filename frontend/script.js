@@ -12,9 +12,22 @@ const shippingMessageEl = document.querySelector('#shipping-message');
 const shippingBarEl = document.querySelector('#shipping-bar');
 const checkoutButtonEl = document.querySelector('#checkout-button');
 const checkoutNoteEl = document.querySelector('#checkout-note');
+const modalEl = document.querySelector('#product-modal');
+const modalCloseEl = document.querySelector('#modal-close');
+const modalImageEl = document.querySelector('#modal-image');
+const modalCategoryEl = document.querySelector('#modal-category');
+const modalTitleEl = document.querySelector('#modal-title');
+const modalDescriptionEl = document.querySelector('#modal-description');
+const modalRatingEl = document.querySelector('#modal-rating');
+const modalStockEl = document.querySelector('#modal-stock');
+const modalOldPriceEl = document.querySelector('#modal-old-price');
+const modalPriceEl = document.querySelector('#modal-price');
+const modalInstallmentEl = document.querySelector('#modal-installment');
+const modalAddEl = document.querySelector('#modal-add');
 
 let products = [];
 let selectedCategory = 'Todos';
+let selectedProductId = null;
 const cart = new Map();
 const freeShippingGoal = 500;
 const cartStorageKey = 'loja-virtual-cart';
@@ -52,7 +65,7 @@ function renderProducts(items) {
   productsEl.innerHTML = items
     .map(
       (product) => `
-        <article class="product-card">
+        <article class="product-card" role="button" tabindex="0" data-id="${product.id}" aria-label="Ver detalhes de ${product.nome}">
           <div class="product-media">
             <img src="${product.imagem}" alt="${product.nome}" />
           </div>
@@ -70,6 +83,32 @@ function renderProducts(items) {
       `
     )
     .join('');
+}
+
+function openProductModal(id) {
+  const product = products.find((item) => item.id === id);
+  if (!product) return;
+
+  selectedProductId = id;
+  modalImageEl.src = product.imagem;
+  modalImageEl.alt = product.nome;
+  modalCategoryEl.textContent = product.categoria;
+  modalTitleEl.textContent = product.nome;
+  modalDescriptionEl.textContent = product.descricao;
+  modalRatingEl.textContent = `Nota ${String(product.avaliacao).replace('.', ',')}`;
+  modalStockEl.textContent = `${product.estoque} em estoque`;
+  modalOldPriceEl.textContent = formatPrice(product.precoAntigo);
+  modalPriceEl.textContent = formatPrice(product.preco);
+  modalInstallmentEl.textContent = product.parcelamento;
+  modalEl.classList.add('is-open');
+  modalEl.setAttribute('aria-hidden', 'false');
+  modalCloseEl.focus();
+}
+
+function closeProductModal() {
+  modalEl.classList.remove('is-open');
+  modalEl.setAttribute('aria-hidden', 'true');
+  selectedProductId = null;
 }
 
 function renderCategories() {
@@ -229,8 +268,24 @@ async function loadProducts() {
 
 productsEl.addEventListener('click', (event) => {
   const button = event.target.closest('.add-button');
-  if (!button) return;
-  addToCart(Number(button.dataset.id));
+  if (button) {
+    addToCart(Number(button.dataset.id));
+    return;
+  }
+
+  const card = event.target.closest('.product-card');
+  if (!card) return;
+  openProductModal(Number(card.dataset.id));
+});
+
+productsEl.addEventListener('keydown', (event) => {
+  if (event.key !== 'Enter' && event.key !== ' ') return;
+  if (event.target.closest('.add-button')) return;
+
+  const card = event.target.closest('.product-card');
+  if (!card) return;
+  event.preventDefault();
+  openProductModal(Number(card.dataset.id));
 });
 
 cartItemsEl.addEventListener('click', (event) => {
@@ -257,6 +312,25 @@ categoryFiltersEl.addEventListener('click', (event) => {
 
 checkoutButtonEl.addEventListener('click', () => {
   checkoutNoteEl.textContent = 'Pedido pronto para finalizar.';
+});
+
+modalCloseEl.addEventListener('click', closeProductModal);
+
+modalEl.addEventListener('click', (event) => {
+  if (event.target === modalEl) {
+    closeProductModal();
+  }
+});
+
+modalAddEl.addEventListener('click', () => {
+  if (!selectedProductId) return;
+  addToCart(selectedProductId);
+});
+
+document.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape' && modalEl.classList.contains('is-open')) {
+    closeProductModal();
+  }
 });
 
 loadSavedCart();
