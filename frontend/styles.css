@@ -489,6 +489,16 @@ h2 {
   box-shadow: 0 28px 80px rgba(10, 18, 32, 0.32);
 }
 
+.checkout-modal {
+  position: relative;
+  width: min(560px, 100%);
+  max-height: min(720px, calc(100vh - 40px));
+  overflow: auto;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 28px 80px rgba(10, 18, 32, 0.32);
+}
+
 .modal-close {
   position: absolute;
   top: 12px;
@@ -590,6 +600,121 @@ h2 {
   background: var(--brand-strong);
 }
 
+.checkout-modal-content {
+  display: grid;
+  gap: 18px;
+  padding: 32px;
+}
+
+.checkout-modal-content h2 {
+  margin: 4px 0 0;
+  font-size: 28px;
+  line-height: 1.1;
+}
+
+.checkout-summary {
+  display: grid;
+  gap: 12px;
+  max-height: 220px;
+  overflow: auto;
+  border-block: 1px solid var(--line);
+  padding: 14px 0;
+}
+
+.checkout-summary-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 14px;
+  align-items: start;
+}
+
+.checkout-summary-item strong,
+.checkout-summary-item span {
+  display: block;
+}
+
+.checkout-summary-item span {
+  color: var(--muted);
+  font-size: 13px;
+  margin-top: 3px;
+}
+
+.coupon-form {
+  display: grid;
+  gap: 8px;
+}
+
+.coupon-form label {
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.coupon-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+}
+
+.coupon-row input {
+  min-width: 0;
+  height: 44px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 0 12px;
+  text-transform: uppercase;
+}
+
+.coupon-row input:focus {
+  border-color: var(--brand);
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(15, 118, 110, 0.12);
+}
+
+.coupon-row button {
+  min-height: 44px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--text);
+  color: #fff;
+  padding: 0 14px;
+  font-weight: 900;
+}
+
+.coupon-message {
+  min-height: 18px;
+  margin: 0;
+  color: var(--brand);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.checkout-totals {
+  display: grid;
+  gap: 10px;
+}
+
+.checkout-totals > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  color: var(--muted);
+}
+
+.checkout-totals > div[hidden] {
+  display: none;
+}
+
+.checkout-totals strong {
+  color: var(--text);
+}
+
+.checkout-modal-total {
+  border-top: 1px solid var(--line);
+  padding-top: 12px;
+  font-size: 18px;
+}
+
 @media (max-width: 920px) {
   .intro,
   .shop-layout {
@@ -642,7 +767,15 @@ h2 {
     padding: 24px;
   }
 
+  .checkout-modal-content {
+    padding: 24px;
+  }
+
   .modal-content h2 {
     font-size: 24px;
+  }
+
+  .coupon-row {
+    grid-template-columns: 1fr;
   }
 }

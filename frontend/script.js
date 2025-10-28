@@ -24,13 +24,29 @@ const modalOldPriceEl = document.querySelector('#modal-old-price');
 const modalPriceEl = document.querySelector('#modal-price');
 const modalInstallmentEl = document.querySelector('#modal-installment');
 const modalAddEl = document.querySelector('#modal-add');
+const checkoutModalEl = document.querySelector('#checkout-modal');
+const checkoutModalCloseEl = document.querySelector('#checkout-modal-close');
+const checkoutSummaryEl = document.querySelector('#checkout-summary');
+const couponFormEl = document.querySelector('#coupon-form');
+const couponCodeEl = document.querySelector('#coupon-code');
+const couponMessageEl = document.querySelector('#coupon-message');
+const checkoutModalSubtotalEl = document.querySelector('#checkout-modal-subtotal');
+const checkoutDiscountRowEl = document.querySelector('#checkout-discount-row');
+const checkoutModalDiscountEl = document.querySelector('#checkout-modal-discount');
+const checkoutModalTotalEl = document.querySelector('#checkout-modal-total');
+const confirmOrderEl = document.querySelector('#confirm-order');
 
 let products = [];
 let selectedCategory = 'Todos';
 let selectedProductId = null;
+let appliedCoupon = null;
 const cart = new Map();
 const freeShippingGoal = 500;
 const cartStorageKey = 'loja-virtual-cart';
+const coupons = {
+  LOJA10: { code: 'LOJA10', discount: 0.1 },
+  TECH15: { code: 'TECH15', discount: 0.15 },
+};
 
 const money = new Intl.NumberFormat('pt-BR', {
   style: 'currency',
@@ -39,6 +55,23 @@ const money = new Intl.NumberFormat('pt-BR', {
 
 function formatPrice(value) {
   return money.format(Number(value) || 0);
+}
+
+function getCartItems() {
+  return [...cart.values()];
+}
+
+function getCartSubtotal() {
+  return getCartItems().reduce((sum, item) => sum + item.quantity * item.preco, 0);
+}
+
+function getDiscountAmount() {
+  if (!appliedCoupon) return 0;
+  return getCartSubtotal() * appliedCoupon.discount;
+}
+
+function getCartTotal() {
+  return Math.max(getCartSubtotal() - getDiscountAmount(), 0);
 }
 
 function saveCart() {
@@ -149,9 +182,10 @@ function updateCatalog() {
 }
 
 function renderCart() {
-  const items = [...cart.values()];
+  const items = getCartItems();
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
-  const total = items.reduce((sum, item) => sum + item.quantity * item.preco, 0);
+  const subtotal = getCartSubtotal();
+  const total = getCartTotal();
   const remaining = Math.max(freeShippingGoal - total, 0);
   const progress = Math.min((total / freeShippingGoal) * 100, 100);
 
@@ -167,6 +201,7 @@ function renderCart() {
   saveCart();
 
   if (items.length === 0) {
+    appliedCoupon = null;
     cartItemsEl.innerHTML = '<p class="empty-state">Seu carrinho está vazio.</p>';
     checkoutNoteEl.textContent = '';
     return;
@@ -192,6 +227,69 @@ function renderCart() {
       `
     )
     .join('');
+
+  if (appliedCoupon) {
+    checkoutNoteEl.textContent = `${appliedCoupon.code} aplicado. Desconto de ${formatPrice(subtotal - total)}.`;
+  }
+}
+
+function renderCheckoutModal() {
+  const items = getCartItems();
+  const subtotal = getCartSubtotal();
+  const discount = getDiscountAmount();
+  const total = getCartTotal();
+
+  checkoutSummaryEl.innerHTML = items
+    .map(
+      (item) => `
+        <div class="checkout-summary-item">
+          <div>
+            <strong>${item.nome}</strong>
+            <span>${item.quantity} x ${formatPrice(item.preco)}</span>
+          </div>
+          <strong>${formatPrice(item.quantity * item.preco)}</strong>
+        </div>
+      `
+    )
+    .join('');
+
+  checkoutModalSubtotalEl.textContent = formatPrice(subtotal);
+  checkoutModalDiscountEl.textContent = `-${formatPrice(discount)}`;
+  checkoutModalTotalEl.textContent = formatPrice(total);
+  checkoutDiscountRowEl.hidden = discount === 0;
+  couponCodeEl.value = appliedCoupon ? appliedCoupon.code : couponCodeEl.value;
+}
+
+function openCheckoutModal() {
+  if (cart.size === 0) return;
+  renderCheckoutModal();
+  couponMessageEl.textContent = '';
+  checkoutModalEl.classList.add('is-open');
+  checkoutModalEl.setAttribute('aria-hidden', 'false');
+  couponCodeEl.focus();
+}
+
+function closeCheckoutModal() {
+  checkoutModalEl.classList.remove('is-open');
+  checkoutModalEl.setAttribute('aria-hidden', 'true');
+}
+
+function applyCoupon(code) {
+  const coupon = coupons[code.trim().toUpperCase()];
+
+  if (!coupon) {
+    appliedCoupon = null;
+    couponMessageEl.textContent = 'Cupom inválido.';
+    renderCart();
+    checkoutNoteEl.textContent = '';
+    renderCheckoutModal();
+    return;
+  }
+
+  appliedCoupon = coupon;
+  couponMessageEl.textContent = `${coupon.code} aplicado.`;
+  renderCart();
+  renderCheckoutModal();
 }
 
 function addToCart(id) {
@@ -296,6 +394,7 @@ cartItemsEl.addEventListener('click', (event) => {
 
 clearCartEl.addEventListener('click', () => {
   cart.clear();
+  appliedCoupon = null;
   checkoutNoteEl.textContent = '';
   renderCart();
 });
@@ -311,7 +410,7 @@ categoryFiltersEl.addEventListener('click', (event) => {
 });
 
 checkoutButtonEl.addEventListener('click', () => {
-  checkoutNoteEl.textContent = 'Pedido pronto para finalizar.';
+  openCheckoutModal();
 });
 
 modalCloseEl.addEventListener('click', closeProductModal);
@@ -327,9 +426,34 @@ modalAddEl.addEventListener('click', () => {
   addToCart(selectedProductId);
 });
 
+checkoutModalCloseEl.addEventListener('click', closeCheckoutModal);
+
+checkoutModalEl.addEventListener('click', (event) => {
+  if (event.target === checkoutModalEl) {
+    closeCheckoutModal();
+  }
+});
+
+couponFormEl.addEventListener('submit', (event) => {
+  event.preventDefault();
+  applyCoupon(couponCodeEl.value);
+});
+
+confirmOrderEl.addEventListener('click', () => {
+  cart.clear();
+  appliedCoupon = null;
+  closeCheckoutModal();
+  renderCart();
+  checkoutNoteEl.textContent = 'Pedido finalizado com sucesso.';
+});
+
 document.addEventListener('keydown', (event) => {
   if (event.key === 'Escape' && modalEl.classList.contains('is-open')) {
     closeProductModal();
+  }
+
+  if (event.key === 'Escape' && checkoutModalEl.classList.contains('is-open')) {
+    closeCheckoutModal();
   }
 });
 
