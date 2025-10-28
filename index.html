@@ -105,6 +105,42 @@
       </div>
     </div>
 
+    <div id="checkout-modal" class="modal-overlay" aria-hidden="true">
+      <div class="checkout-modal" role="dialog" aria-modal="true" aria-labelledby="checkout-modal-title">
+        <button id="checkout-modal-close" class="modal-close" type="button" aria-label="Fechar">x</button>
+        <div class="checkout-modal-content">
+          <div>
+            <span class="modal-category">Pedido</span>
+            <h2 id="checkout-modal-title">Finalizar compra</h2>
+          </div>
+          <div id="checkout-summary" class="checkout-summary"></div>
+          <form id="coupon-form" class="coupon-form">
+            <label for="coupon-code">Cupom</label>
+            <div class="coupon-row">
+              <input id="coupon-code" type="text" placeholder="Digite seu cupom" autocomplete="off" />
+              <button type="submit">Aplicar</button>
+            </div>
+            <p id="coupon-message" class="coupon-message" role="status"></p>
+          </form>
+          <div class="checkout-totals">
+            <div>
+              <span>Subtotal</span>
+              <strong id="checkout-modal-subtotal">R$ 0,00</strong>
+            </div>
+            <div id="checkout-discount-row">
+              <span>Desconto</span>
+              <strong id="checkout-modal-discount">R$ 0,00</strong>
+            </div>
+            <div class="checkout-modal-total">
+              <span>Total</span>
+              <strong id="checkout-modal-total">R$ 0,00</strong>
+            </div>
+          </div>
+          <button id="confirm-order" class="modal-add-button" type="button">Confirmar pedido</button>
+        </div>
+      </div>
+    </div>
+
     <script src="/script.js"></script>
   </body>
 </html>
