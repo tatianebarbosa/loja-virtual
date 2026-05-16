@@ -348,8 +348,7 @@ function filterProducts() {
 
 async function loadProducts() {
   try {
-    const response = await fetch('/api/produtos');
-    products = await response.json();
+    products = await fetchProducts();
     cart.forEach((item) => {
       const product = products.find((productItem) => productItem.id === item.id);
       if (product) {
@@ -362,6 +361,23 @@ async function loadProducts() {
     productsEl.innerHTML = '<p class="empty-state">Nao foi possivel carregar os produtos.</p>';
     productCountEl.textContent = 'Erro ao carregar';
   }
+}
+
+async function fetchProducts() {
+  const sources = ['/api/produtos', 'data/produtos.json'];
+
+  for (const source of sources) {
+    try {
+      const response = await fetch(source);
+      if (response.ok) {
+        return response.json();
+      }
+    } catch (error) {
+      // Tenta a proxima origem para manter a previa estatica funcionando.
+    }
+  }
+
+  throw new Error('Nao foi possivel carregar os produtos.');
 }
 
 productsEl.addEventListener('click', (event) => {

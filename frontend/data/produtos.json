@@ -1,0 +1,80 @@
+[
+  {
+    "id": 1,
+    "nome": "Notebook Gamer Orion 15",
+    "categoria": "Computadores",
+    "preco": 5999.65,
+    "precoAntigo": 6799.9,
+    "descricao": "Notebook potente para jogos, estudos e edição de vídeo.",
+    "estoque": 8,
+    "avaliacao": 4.8,
+    "parcelamento": "10x de R$ 599,97",
+    "tag": "Mais vendido",
+    "imagem": "https://images.unsplash.com/photo-1593642702821-c8da6771f0c6?auto=format&fit=crop&w=900&q=80"
+  },
+  {
+    "id": 2,
+    "nome": "Smartphone X Pro",
+    "categoria": "Celulares",
+    "preco": 2499.07,
+    "precoAntigo": 2899.9,
+    "descricao": "Tela AMOLED, câmera de 108MP e bateria para o dia todo.",
+    "estoque": 14,
+    "avaliacao": 4.7,
+    "parcelamento": "10x de R$ 249,91",
+    "tag": "Oferta",
+    "imagem": "https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=900&q=80"
+  },
+  {
+    "id": 3,
+    "nome": "Fone Bluetooth Pulse",
+    "categoria": "Áudio",
+    "preco": 199.9,
+    "precoAntigo": 279.9,
+    "descricao": "Som imersivo, cancelamento de ruído e estojo com recarga rápida.",
+    "estoque": 32,
+    "avaliacao": 4.6,
+    "parcelamento": "4x de R$ 49,98",
+    "tag": "Novo",
+    "imagem": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=900&q=80"
+  },
+  {
+    "id": 4,
+    "nome": "Monitor UltraWide 29",
+    "categoria": "Computadores",
+    "preco": 1299.9,
+    "precoAntigo": 1499.9,
+    "descricao": "Tela ampla para trabalhar com várias janelas e jogar com mais imersão.",
+    "estoque": 11,
+    "avaliacao": 4.5,
+    "parcelamento": "10x de R$ 129,99",
+    "tag": "Home office",
+    "imagem": "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?auto=format&fit=crop&w=900&q=80"
+  },
+  {
+    "id": 5,
+    "nome": "Teclado Mecânico RGB",
+    "categoria": "Acessórios",
+    "preco": 349.9,
+    "precoAntigo": 429.9,
+    "descricao": "Switches macios, iluminação ajustável e construção reforçada.",
+    "estoque": 20,
+    "avaliacao": 4.9,
+    "parcelamento": "6x de R$ 58,32",
+    "tag": "Setup",
+    "imagem": "https://images.unsplash.com/photo-1618384887929-16ec33fab9ef?auto=format&fit=crop&w=900&q=80"
+  },
+  {
+    "id": 6,
+    "nome": "Mouse Precision Pro",
+    "categoria": "Acessórios",
+    "preco": 159.9,
+    "precoAntigo": 219.9,
+    "descricao": "Sensor preciso, botões programáveis e pegada confortável.",
+    "estoque": 27,
+    "avaliacao": 4.4,
+    "parcelamento": "3x de R$ 53,30",
+    "tag": "Essencial",
+    "imagem": "https://images.unsplash.com/photo-1527814050087-3793815479db?auto=format&fit=crop&w=900&q=80"
+  }
+]
